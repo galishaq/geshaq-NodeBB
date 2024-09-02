@@ -16,79 +16,79 @@ SocketRooms.getTotalGuestCount = async function () {
 };
 
 SocketRooms.getAll = async function () {
-    console.log('GhalyaRefactoredCode');
-    const sockets = await io.server.fetchSockets();
+	console.log('GhalyaRefactoredCode');
+	const sockets = await io.server.fetchSockets();
 
-    totals.onlineGuestCount = 0;
-    totals.onlineRegisteredCount = 0;
-    totals.socketCount = sockets.length;
-    totals.topTenTopics = [];
-    totals.users = {
-        categories: 0,
-        recent: 0,
-        unread: 0,
-        topics: 0,
-        category: 0,
-    };
-    const userRooms = {};
-    const topicData = {};
+	totals.onlineGuestCount = 0;
+	totals.onlineRegisteredCount = 0;
+	totals.socketCount = sockets.length;
+	totals.topTenTopics = [];
+	totals.users = {
+		categories: 0,
+		recent: 0,
+		unread: 0,
+		topics: 0,
+		category: 0,
+	};
+	const userRooms = {};
+	const topicData = {};
 
-    for (const s of sockets) {
-        processSocket(s, totals, userRooms, topicData);
-    }
+	for (const s of sockets) {
+		processSocket(s, totals, userRooms, topicData);
+	}
 
-    totals.onlineRegisteredCount = Object.keys(userRooms).length;
+	totals.onlineRegisteredCount = Object.keys(userRooms).length;
 
-    let topTenTopics = getTopTenTopics(topicData);
-    const topTenTids = topTenTopics.map(topic => topic.tid);
+	const topTenTopics = getTopTenTopics(topicData);
+	const topTenTids = topTenTopics.map(topic => topic.tid);
 
-    const titles = await topics.getTopicsFields(topTenTids, ['title']);
-    totals.topTenTopics = topTenTopics.map((topic, index) => {
-        topic.title = titles[index].title;
-        return topic;
-    });
+	const titles = await topics.getTopicsFields(topTenTids, ['title']);
+	totals.topTenTopics = topTenTopics.map((topic, index) => {
+		topic.title = titles[index].title;
+		return topic;
+	});
 
-    return totals;
+	return totals;
 };
 
 function processSocket(s, totals, userRooms, topicData) {
-    console.log('GhalyaRefactoredCode1');
-    for (const key of s.rooms) {
-        if (key === 'online_guests') {
-            totals.onlineGuestCount += 1;
-        } else if (key === 'categories') {
-            totals.users.categories += 1;
-        } else if (key === 'recent_topics') {
-            totals.users.recent += 1;
-        } else if (key === 'unread_topics') {
-            totals.users.unread += 1;
-        } else if (key.startsWith('uid_')) {
-            userRooms[key] = 1;
-        } else if (key.startsWith('category_')) {
-            totals.users.category += 1;
-        } else {
-            processTopicKey(key, totals, topicData);
-        }
-    }
+	console.log('GhalyaRefactoredCode1');
+	for (const key of s.rooms) {
+		if (key === 'online_guests') {
+			totals.onlineGuestCount += 1;
+		} else if (key === 'categories') {
+			totals.users.categories += 1;
+		} else if (key === 'recent_topics') {
+			totals.users.recent += 1;
+		} else if (key === 'unread_topics') {
+			totals.users.unread += 1;
+		} else if (key.startsWith('uid_')) {
+			userRooms[key] = 1;
+		} else if (key.startsWith('category_')) {
+			totals.users.category += 1;
+		} else {
+			processTopicKey(key, totals, topicData);
+		}
+	}
 }
 
 function processTopicKey(key, totals, topicData) {
-    console.log('GhalyaRefactoredCode2');
-    const tid = key.match(/^topic_(\d+)/);
-    if (tid) {
-        totals.users.topics += 1;
-        topicData[tid[1]] = topicData[tid[1]] || { count: 0 };
-        topicData[tid[1]].count += 1;
-    }
+	console.log('GhalyaRefactoredCode2');
+	const tid = key.match(/^topic_(\d+)/);
+	if (tid) {
+		totals.users.topics += 1;
+		topicData[tid[1]] = topicData[tid[1]] || { count: 0 };
+		topicData[tid[1]].count += 1;
+	}
 }
 
 function getTopTenTopics(topicData) {
-    console.log('GhalyaRefactoredCode3');
-    let topTenTopics = [];
-    Object.keys(topicData).forEach((tid) => {
-        topTenTopics.push({ tid: tid, count: topicData[tid].count });
-    });
-    return topTenTopics.sort((a, b) => b.count - a.count).slice(0, 10);
+	console.log('GhalyaRefactoredCode3');
+	const topTenTopics = [];
+	Object.keys(topicData).forEach((tid) => {
+		topTenTopics.push({ tid: tid, count: topicData[tid].count });
+	});
+	return topTenTopics.sort((a, b) => b.count - a.count).slice(0, 10);
 }
 
 SocketRooms.getOnlineUserCount = function (io) {
