@@ -16,6 +16,7 @@ SocketRooms.getTotalGuestCount = async function () {
 };
 
 SocketRooms.getAll = async function () {
+	console.log(GhalyaRefactoredCode);
     const sockets = await io.server.fetchSockets();
 
     totals.onlineGuestCount = 0;
