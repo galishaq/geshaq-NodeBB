@@ -83,13 +83,13 @@ function processTopicKey(key, totals, topicData) {
 }
 
 function getTopTenTopics(topicData) {
-    console.log('GhalyaRefactoredCode3');
-    const topTenTopics = [];
-    Object.keys(topicData).forEach((tid) => {
-        topTenTopics.push({ tid: tid, count: topicData[tid].count });
-    });
-    const sortedTopTenTopics = [...topTenTopics].sort((a, b) => b.count - a.count);
-    return sortedTopTenTopics.slice(0, 10);
+	console.log('GhalyaRefactoredCode3');
+	const topTenTopics = [];
+	Object.keys(topicData).forEach((tid) => {
+		topTenTopics.push({ tid: tid, count: topicData[tid].count });
+	});
+	const sortedTopTenTopics = [...topTenTopics].sort((a, b) => b.count - a.count);
+	return sortedTopTenTopics.slice(0, 10);
 }
 
 
