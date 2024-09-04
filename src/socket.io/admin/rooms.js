@@ -88,8 +88,8 @@ function getTopTenTopics(topicData) {
     Object.keys(topicData).forEach((tid) => {
         topTenTopics.push({ tid: tid, count: topicData[tid].count });
     });
-    topTenTopics.sort((a, b) => b.count - a.count);
-    return topTenTopics.slice(0, 10);
+    const sortedTopTenTopics = [...topTenTopics].sort((a, b) => b.count - a.count);
+    return sortedTopTenTopics.slice(0, 10);
 }
 
 
